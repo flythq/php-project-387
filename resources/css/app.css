@@ -1,0 +1,58 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-brand-50: oklch(97.2% .014 254.604);
+    --color-brand-100: oklch(93.2% .032 255.585);
+    --color-brand-200: oklch(88.2% .059 254.864);
+    --color-brand-300: oklch(80.9% .105 251.817);
+    --color-brand-400: oklch(70.7% .165 254.624);
+    --color-brand-500: oklch(62.1% .214 259.815);
+    --color-brand-600: oklch(54.6% .245 262.881);
+    --color-brand-700: oklch(48.8% .243 264.376);
+    --color-brand-800: oklch(42.8% .202 264.589);
+    --color-brand-900: oklch(37.9% .162 264.544);
+    --color-brand-950: oklch(28.0% .111 261.217);
+}
+
+@layer base {
+    html {
+        -webkit-text-size-adjust: 100%;
+        text-rendering: optimizeLegibility;
+    }
+
+    body {
+        background-color: oklch(100% 0 0);
+        color: oklch(21% .034 264.665);
+    }
+
+    @media (prefers-color-scheme: dark) {
+        body {
+            background-color: oklch(14.5% .015 264.04);
+            color: oklch(98% .005 264.4);
+        }
+    }
+
+    ::selection {
+        background-color: var(--color-brand-200);
+        color: var(--color-brand-900);
+    }
+
+    @media (prefers-color-scheme: dark) {
+        ::selection {
+            background-color: var(--color-brand-800);
+            color: oklch(98% .005 264.4);
+        }
+    }
+}
+
+@utility focus-ring {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    --tw-ring-color: var(--color-brand-500);
+}

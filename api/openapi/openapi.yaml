@@ -1,0 +1,220 @@
+openapi: 3.1.0
+info:
+  title: Call Calendar API
+  version: 0.0.0
+tags: []
+paths:
+  /availability:
+    get:
+      operationId: listAvailability
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Slot'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '422':
+          description: Client error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /bookings:
+    post:
+      operationId: createBooking
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '422':
+          description: Client error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookingRequest'
+  /bookings/{id}:
+    get:
+      operationId: getBooking
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/uuid'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+components:
+  schemas:
+    Booking:
+      type: object
+      required:
+        - id
+        - slotId
+        - host
+        - invitee
+        - createdAt
+        - state
+      properties:
+        id:
+          $ref: '#/components/schemas/uuid'
+        slotId:
+          $ref: '#/components/schemas/uuid'
+        host:
+          $ref: '#/components/schemas/Host'
+        invitee:
+          $ref: '#/components/schemas/Invitee'
+        createdAt:
+          type: string
+          format: date-time
+        state:
+          $ref: '#/components/schemas/BookingState'
+    BookingRequest:
+      type: object
+      required:
+        - slotId
+        - invitee
+      properties:
+        slotId:
+          $ref: '#/components/schemas/uuid'
+        invitee:
+          $ref: '#/components/schemas/Invitee'
+    BookingState:
+      type: string
+      enum:
+        - confirmed
+        - canceled
+    ErrorEnvelope:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: string
+    Host:
+      type: object
+      required:
+        - id
+        - name
+        - email
+      properties:
+        id:
+          $ref: '#/components/schemas/uuid'
+        name:
+          type: string
+        email:
+          type: string
+    Invitee:
+      type: object
+      required:
+        - name
+        - email
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+    Slot:
+      type: object
+      required:
+        - id
+        - start
+        - end
+        - durationMinutes
+        - hostId
+        - status
+      properties:
+        id:
+          $ref: '#/components/schemas/uuid'
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        durationMinutes:
+          type: number
+          enum:
+            - 30
+        hostId:
+          $ref: '#/components/schemas/uuid'
+        status:
+          $ref: '#/components/schemas/SlotStatus'
+    SlotStatus:
+      type: string
+      enum:
+        - available
+        - booked
+    UnprocessableContentResponse:
+      type: object
+      description: ''
+    uuid:
+      type: string
+      format: uuid

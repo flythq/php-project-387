@@ -1,0 +1,29 @@
+{
+    "$schema": "https://www.schemastore.org/package.json",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "dev": "vite",
+        "tsp:build": "npm --prefix typespec run build && npm run sdk:build && npm run server:generate",
+        "tsp:smoke": "npm --prefix typespec run smoke",
+        "sdk:build": "openapi-typescript api/openapi/openapi.yaml -o resources/js/api/schema.d.ts",
+        "server:generate": "php artisan spec:generate-server",
+        "server:check": "php artisan spec:generate-server && git diff --exit-code app/Dto app/Http/Requests/Api app/Http/Controllers/Api routes/api.php",
+        "server:deterministic": "git add -- app/Dto app/Http/Requests/Api app/Http/Controllers/Api routes/api.php && npm run server:generate && (git diff --exit-code -- app/Dto app/Http/Requests/Api app/Http/Controllers/Api routes/api.php; rc=$?; git reset -q HEAD -- app/Dto app/Http/Requests/Api app/Http/Controllers/Api routes/api.php; exit $rc)",
+        "spec": "npm run tsp:build && npm run tsp:smoke && npm run server:deterministic && npm run typecheck",
+        "typecheck": "tsc --noEmit"
+    },
+    "devDependencies": {
+        "@tailwindcss/vite": "^4.0.0",
+        "concurrently": "^10.0.3",
+        "laravel-vite-plugin": "^3.1",
+        "openapi-typescript": "^7.13.0",
+        "tailwindcss": "^4.0.0",
+        "typescript": "^5.9.3",
+        "vite": "^8.0.0"
+    },
+    "optionalDependencies": {
+        "@laravel/multiplex": "^0.4.1"
+    }
+}
